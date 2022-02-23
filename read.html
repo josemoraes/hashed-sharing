@@ -32,7 +32,6 @@
             }
 
             function _decryptHashAndReturnText(hash) {
-                console.log('HASH >>>', hash);
                 return new Promise(resolve => resolve(CryptoJS.AES.decrypt(hash, _NOT_SO_SECRET_KEY).toString(CryptoJS.enc.Utf8)));
             }
 
