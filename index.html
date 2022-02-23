@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hashed Sharing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
+        integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body class="h-screen w-screen bg-blue-400 flex flex-col items-center justify-baseline">
+    <header class="py-10 my-10 text-center">
+        <h1 class="text-5xl font-bold uppercase tracking-wide text-white text-shadow">Hashed Sharing</h1>
+    </header>
+    <main class="bg-blue-300 shadow w-full py-10 flex flex-col items-center justify-center">
+        <textarea name="text-to-convert" id="text-to-convert" class="max-h-80 h-80 w-full px-5 py-7"></textarea>
+        <button id="create-link" class="px-12 py-5 shadow my-10 bg-orange-300 uppercase tracking-widest hover:underline">Create Link</button>
+
+        <a id="generated-link" class="bg-gray-200 rounded text-sm hover:underline" href="#!" target="_blank"></a>
+    </main>
+    <script>
+        window.onload = () => {
+            const _NOT_SO_SECRET_KEY = 'hashed';
+            const $createLinkButton = document.getElementById('create-link');
+
+            $createLinkButton.addEventListener('click', createLinkEvent);
+
+            function createLinkEvent() {
+                const $input = document.getElementById('text-to-convert');
+                const $generatedLink = document.getElementById('generated-link');
+
+                _getTextFromInputElement($input)
+                    .then(text => _parseTextIntoHash(text, _NOT_SO_SECRET_KEY))
+                    .then(hash => _buildURLWithHash(hash))
+                    .then(url => _attachURLOnElement($generatedLink, url));
+            }
+
+            function _getTextFromInputElement($element) {
+                return new Promise(resolve => resolve($element.value));
+            }
+
+            function _parseTextIntoHash(text, encryptionKey) {
+                return new Promise(resolve => resolve(CryptoJS.AES.encrypt(text, encryptionKey)));
+            }
+
+            function _buildURLWithHash(hash) {
+                const _readPath = '/read.html';
+                const _origin = location.origin;
+                const _query = `q=${hash}`;
+
+                return new Promise(resolve => resolve(`${_origin}${_readPath}?${_query}`));
+            }
+
+            function _attachURLOnElement($element, url) {
+                $element.innerText = url;
+                $element.href = url;
+            }
+
+        }
+    </script>
+</body>
+
+</html>

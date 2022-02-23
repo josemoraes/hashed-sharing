@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hashed Sharing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
+        integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body class="h-screen w-screen bg-blue-400 flex flex-col items-center justify-baseline">
+    <header class="py-10 my-10 text-center">
+        <h1 class="text-5xl font-bold uppercase tracking-wide text-white text-shadow">Read the hashed text</h1>
+    </header>
+    <main class="bg-white shadow w-full py-10 px-8 flex flex-col items-left">
+        <p id="hash-to-text"></p>
+    </main>
+
+    <script>
+        window.onload = () => {
+            const _NOT_SO_SECRET_KEY = 'hashed';
+
+            _getHashFromURL()
+                .then(hash => _decryptHashAndReturnText(hash))
+                .then(text => _attachTextToParagraph(text));
+
+            function _getHashFromURL() {
+                return new Promise(resolve => resolve(location.search.replace('?q=', '')));
+            }
+
+            function _decryptHashAndReturnText(hash) {
+                console.log('HASH >>>', hash);
+                return new Promise(resolve => resolve(CryptoJS.AES.decrypt(hash, _NOT_SO_SECRET_KEY).toString(CryptoJS.enc.Utf8)));
+            }
+
+            function _attachTextToParagraph(text) {
+                const $paragraph = document.getElementById('hash-to-text');
+                $paragraph.innerText = text;
+            }
+        }
+    </script>
+</body>
+
+</html>
